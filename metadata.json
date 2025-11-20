@@ -1,0 +1,5 @@
+{
+  "name": "Snap2Code",
+  "description": "Instantly convert UI sketches, screenshots, or wireframes into production-ready HTML & Tailwind CSS using Gemini 2.5 Flash.",
+  "requestFramePermissions": []
+}
