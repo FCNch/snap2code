@@ -261,14 +261,37 @@ export default function App() {
                       Generating {selectedFormat.split('_')[0].toUpperCase()}...
                     </span>
                   ) : status === AppStatus.ERROR ? (
-                    <div className="flex items-start text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
-                         <svg className="w-5 h-5 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <div className="flex flex-col">
-                            <span className="font-medium text-xs">Error</span>
-                            <span className="text-xs opacity-90">{errorMessage}</span>
+                    <div className="flex flex-col items-start text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20 w-full">
+                        <div className="flex items-center mb-1">
+                             <svg className="w-5 h-5 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="font-bold text-sm">Error</span>
                         </div>
+                        <span className="text-xs opacity-90 mb-2">{errorMessage}</span>
+                        
+                        {/* Troubleshooting Box for API Key issues */}
+                        {(errorMessage?.includes("API Key") || errorMessage?.includes(".env")) && (
+                            <div className="w-full mt-2 p-2 bg-slate-900/50 rounded text-slate-400 text-xs border border-slate-700">
+                                <p className="font-semibold text-slate-300 mb-1">Troubleshooting:</p>
+                                <ul className="list-disc list-inside space-y-1 mb-2">
+                                    <li>Check the <code className="bg-slate-800 px-1 rounded text-white">.env</code> file in your project root.</li>
+                                    <li>Key must start with <code className="bg-slate-800 px-1 rounded text-white">AIza</code>.</li>
+                                    <li>Restart server: <code className="bg-slate-800 px-1 rounded text-white">Ctrl+C</code> then <code className="bg-slate-800 px-1 rounded text-white">npm run dev</code>.</li>
+                                </ul>
+                                <a 
+                                  href="https://aistudio.google.com/app/apikey" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center text-blue-400 hover:text-blue-300 underline mt-1"
+                                >
+                                  Get a valid API Key here
+                                  <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </a>
+                            </div>
+                        )}
                     </div>
                   ) : status === AppStatus.SUCCESS ? (
                     <span className="text-emerald-400 flex items-center">

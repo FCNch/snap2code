@@ -89,9 +89,36 @@ const PROMPTS: Record<OutputFormat, string> = {
 
 export const generateCodeFromImage = async (base64Data: string, mimeType: string, format: OutputFormat = 'html_tailwind'): Promise<ConversionResult> => {
   try {
-    const apiKey = process.env.API_KEY;
+    // Robust API Key retrieval and cleaning
+    let apiKey = process.env.API_KEY;
+    
+    if (apiKey) {
+        apiKey = apiKey.trim();
+        // Remove accidental quotes if dotenv parsing didn't catch them
+        if ((apiKey.startsWith('"') && apiKey.endsWith('"')) || (apiKey.startsWith("'") && apiKey.endsWith("'"))) {
+            apiKey = apiKey.substring(1, apiKey.length - 1);
+        }
+    }
+
+    // Safe Logging for Debugging (Masked)
+    if (apiKey && apiKey.length > 10) {
+        console.log(`[Snap2Code] Using API Key: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)} (Length: ${apiKey.length})`);
+    } else if (apiKey) {
+        console.log(`[Snap2Code] Using API Key: ${apiKey} (Warning: Key is very short)`);
+    } else {
+        console.error("[Snap2Code] API Key is missing or undefined in process.env.API_KEY");
+    }
+
     if (!apiKey) {
-      throw new Error("API Key is missing in environment variables. Please check your configuration.");
+      throw new Error("API Key is missing. Please check your .env file.");
+    }
+    
+    if (apiKey.includes("YourKeyHere")) {
+         throw new Error("You are using the placeholder API Key. Please replace it with your actual key in the .env file.");
+    }
+    
+    if (!apiKey.startsWith("AIza")) {
+         throw new Error("Invalid API Key format. Google API keys usually start with 'AIza'. Please check your .env file.");
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -162,13 +189,16 @@ export const generateCodeFromImage = async (base64Data: string, mimeType: string
     
     // Improve error messaging based on common issues
     if (error.message) {
-        if (error.message.includes('API_KEY') || error.message.includes('401')) {
-            errorMessage = "Invalid API Key provided. Please check your settings.";
-        } else if (error.message.includes('429') || error.message.includes('quota')) {
-            errorMessage = "API Quota exceeded. Please wait a moment and try again.";
-        } else if (error.message.includes('503')) {
+        // Check for Google API specific error codes in the message string or nested error object
+        const msg = error.message.toLowerCase();
+
+        if (msg.includes('api_key') || msg.includes('400') || msg.includes('invalid_argument')) {
+            errorMessage = "Invalid API Key. The key provided was rejected by Google. Please ensure you have copied it correctly and enabled the API.";
+        } else if (msg.includes('429') || msg.includes('quota')) {
+            errorMessage = "API Quota exceeded. You may be sending too many requests. Please wait a moment.";
+        } else if (msg.includes('503')) {
             errorMessage = "The AI service is currently unavailable. Please try again later.";
-        } else if (error.message.includes('SAFETY')) {
+        } else if (msg.includes('safety')) {
             errorMessage = "The image was flagged by safety settings and could not be processed.";
         } else {
             errorMessage = error.message;
