@@ -34,7 +34,7 @@ export const CodeViewer: React.FC<CodeViewerProps> = ({ code }) => {
         </Button>
       </div>
       <div className="relative flex-1 overflow-hidden">
-        <pre className="absolute inset-0 overflow-auto p-4 text-sm font-mono text-slate-300 bg-slate-900">
+        <pre className="absolute inset-0 overflow-auto p-4 text-sm font-mono text-slate-300 bg-slate-900 scroll-smooth">
           <code>{code}</code>
         </pre>
       </div>

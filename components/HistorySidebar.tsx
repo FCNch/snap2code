@@ -10,6 +10,22 @@ interface HistorySidebarProps {
   onDelete: (id: string) => void;
 }
 
+const FORMAT_LABELS: Record<string, string> = {
+    'html_tailwind': 'HTML',
+    'html_bootstrap': 'BS5',
+    'react_tailwind': 'React',
+    'json': 'JSON',
+    'sql': 'SQL'
+};
+
+const FORMAT_COLORS: Record<string, string> = {
+    'html_tailwind': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+    'html_bootstrap': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+    'react_tailwind': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    'json': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    'sql': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
+};
+
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({ 
   isOpen, 
   onClose, 
@@ -45,7 +61,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
           {history.length === 0 ? (
             <div className="text-center text-slate-500 mt-10">
               <p>No history yet.</p>
@@ -70,6 +86,14 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+                  
+                  {/* Format Badge */}
+                  <div className="absolute top-2 right-2">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${FORMAT_COLORS[item.format || 'html_tailwind'] || 'bg-slate-600 text-white'}`}>
+                          {FORMAT_LABELS[item.format || 'html_tailwind'] || 'HTML'}
+                      </span>
+                  </div>
+
                   <div className="absolute bottom-2 left-2 right-2">
                     <p className="text-xs text-slate-300 truncate font-medium">{item.imageName}</p>
                     <p className="text-[10px] text-slate-500">

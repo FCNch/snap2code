@@ -60,7 +60,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ html }) => {
       </div>
 
       {/* Zoom Container */}
-      <div className="flex-1 bg-slate-200/50 overflow-auto relative flex">
+      <div className="flex-1 bg-slate-200/50 overflow-auto relative flex scroll-smooth">
         <div 
             className="origin-top-left transition-transform duration-200 ease-out bg-white"
             style={{ 

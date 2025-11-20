@@ -6,8 +6,11 @@ export enum AppStatus {
   ERROR = 'ERROR',
 }
 
+export type OutputFormat = 'html_tailwind' | 'html_bootstrap' | 'react_tailwind' | 'json' | 'sql';
+
 export interface ConversionResult {
-  html: string;
+  code: string;
+  format: OutputFormat;
 }
 
 export interface ImageFile {
@@ -21,7 +24,8 @@ export interface HistoryItem {
   id: string;
   timestamp: number;
   imageName: string;
-  html: string;
+  code: string; 
+  format: OutputFormat;
   previewBase64: string; // Store a small preview or the full image
   mimeType: string;
 }
