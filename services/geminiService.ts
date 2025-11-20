@@ -101,8 +101,8 @@ export const generateCodeFromImage = async (base64Data: string, mimeType: string
     }
 
     // Safe Logging for Debugging (Masked)
-    if (apiKey && apiKey.length > 10) {
-        console.log(`[Snap2Code] Using API Key: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)} (Length: ${apiKey.length})`);
+    if (apiKey && apiKey.length > 5) {
+        console.log(`[Snap2Code] Using API Key: ${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)} (Length: ${apiKey.length})`);
     } else if (apiKey) {
         console.log(`[Snap2Code] Using API Key: ${apiKey} (Warning: Key is very short)`);
     } else {
@@ -110,16 +110,15 @@ export const generateCodeFromImage = async (base64Data: string, mimeType: string
     }
 
     if (!apiKey) {
-      throw new Error("API Key is missing. Please check your .env file.");
+      throw new Error("API Key is missing. Please check your .env file and restart the server.");
     }
     
     if (apiKey.includes("YourKeyHere")) {
          throw new Error("You are using the placeholder API Key. Please replace it with your actual key in the .env file.");
     }
     
-    if (!apiKey.startsWith("AIza")) {
-         throw new Error("Invalid API Key format. Google API keys usually start with 'AIza'. Please check your .env file.");
-    }
+    // Removed strict 'AIza' check to allow the API to validate the key itself.
+    // This prevents false positives if the key format changes or is proxied.
 
     const ai = new GoogleGenAI({ apiKey });
     
@@ -194,6 +193,8 @@ export const generateCodeFromImage = async (base64Data: string, mimeType: string
 
         if (msg.includes('api_key') || msg.includes('400') || msg.includes('invalid_argument')) {
             errorMessage = "Invalid API Key. The key provided was rejected by Google. Please ensure you have copied it correctly and enabled the API.";
+        } else if (msg.includes('403')) {
+             errorMessage = "API Permission Denied. Ensure your API key is active and has access to Generative Language API.";
         } else if (msg.includes('429') || msg.includes('quota')) {
             errorMessage = "API Quota exceeded. You may be sending too many requests. Please wait a moment.";
         } else if (msg.includes('503')) {

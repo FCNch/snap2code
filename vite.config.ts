@@ -11,7 +11,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       // Expose API_KEY to the client source code as process.env.API_KEY
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
+      // Default to empty string to prevent 'process is not defined' errors if key is missing
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
     },
   }
 })
